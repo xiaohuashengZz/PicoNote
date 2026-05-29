@@ -1,0 +1,216 @@
+/**
+ * Tiptap 编辑器样式
+ *
+ * @description Tiptap 富文本编辑器的 CSS 样式
+ */
+
+/* 编辑器容器 */
+.tiptap-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* 工具栏 */
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+/* 工具栏分组 */
+.toolbar-group {
+  display: flex;
+  gap: 2px;
+}
+
+/* 工具栏分隔线 */
+.toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+/* 工具栏按钮 */
+.toolbar-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbar-btn:hover {
+  background: var(--hover);
+  color: var(--text-primary);
+}
+
+.toolbar-btn.active {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 编辑器内容包装器 */
+.editor-content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ProseMirror 编辑器内容样式 */
+.editor-content-wrapper .ProseMirror {
+  outline: none;
+  min-height: 300px;
+  padding: 16px;
+}
+
+.editor-content-wrapper .ProseMirror p {
+  margin: 0.5em 0;
+}
+
+.editor-content-wrapper .ProseMirror h1 {
+  font-size: 1.75em;
+  font-weight: 700;
+  margin: 1em 0 0.5em;
+  color: var(--text-primary);
+}
+
+.editor-content-wrapper .ProseMirror h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.875em 0 0.5em;
+  color: var(--text-primary);
+}
+
+.editor-content-wrapper .ProseMirror h3 {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin: 0.75em 0 0.5em;
+  color: var(--text-primary);
+}
+
+.editor-content-wrapper .ProseMirror ul,
+.editor-content-wrapper .ProseMirror ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+
+.editor-content-wrapper .ProseMirror li {
+  margin: 0.25em 0;
+}
+
+.editor-content-wrapper .ProseMirror blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1em;
+  margin: 1em 0;
+  color: var(--text-secondary);
+}
+
+/* 代码块样式 */
+.editor-content-wrapper .ProseMirror pre {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+[data-theme="dark"] .editor-content-wrapper .ProseMirror pre {
+  background: #0d0d0d;
+}
+
+/* 行内代码 */
+.editor-content-wrapper .ProseMirror code {
+  background: var(--bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+}
+
+/* 任务列表样式 */
+.editor-content-wrapper .ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.editor-content-wrapper .ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.editor-content-wrapper .ProseMirror ul[data-type="taskList"] li > label {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.editor-content-wrapper .ProseMirror ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+
+.editor-content-wrapper .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* 图片样式 */
+.editor-content-wrapper .ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1em 0;
+}
+
+.editor-content-wrapper .ProseMirror img.ProseMirror-selectednode {
+  outline: 2px solid var(--accent);
+}
+
+/* 链接样式 */
+.editor-content-wrapper .ProseMirror a {
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* 占位符样式 */
+.editor-content-wrapper .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  pointer-events: none;
+  height: 0;
+  float: left;
+}
+
+/* 水平线 */
+.editor-content-wrapper .ProseMirror hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5em 0;
+}
+
+/* 选中文本样式 */
+.editor-content-wrapper .ProseMirror ::selection {
+  background: var(--accent-light);
+}

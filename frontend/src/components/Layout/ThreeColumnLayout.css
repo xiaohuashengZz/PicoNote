@@ -1,0 +1,47 @@
+/**
+ * 三栏布局样式
+ *
+ * @description 三栏布局的 CSS 样式
+ * 使用 CSS Grid 实现响应式布局
+ */
+
+/* 主布局容器 - 三栏网格 */
+.three-column-layout {
+  display: grid;
+  grid-template-columns: auto 260px 1fr;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+}
+
+/* 侧边栏样式 */
+.layout-sidebar {
+  width: 220px;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  transition: width 0.3s ease;
+}
+
+.layout-sidebar.collapsed {
+  width: 50px;
+}
+
+/* 笔记列表样式 */
+.layout-note-list {
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  transition: width 0.3s ease;
+}
+
+.layout-note-list.collapsed {
+  width: 50px;
+}
+
+/* 编辑器样式 */
+.layout-editor {
+  background: var(--bg-primary);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}

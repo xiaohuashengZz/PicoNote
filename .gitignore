@@ -1,0 +1,29 @@
+# Build artifacts
+src-tauri/target/
+frontend/dist/
+frontend/build/
+
+# Dependencies
+frontend/node_modules/
+
+# Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Lock files (optional - uncomment if you want to commit them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

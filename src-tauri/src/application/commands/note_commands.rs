@@ -1,0 +1,83 @@
+//! 笔记命令模块
+//!
+//! @description 实现笔记相关的 Tauri Commands
+//! 提供前端调用的笔记 CRUD API
+
+use crate::infrastructure::database::{DbPool, repository::note_repository::{Note, NoteRepository}};
+use tauri::State;
+use tracing::info;
+
+/// 创建新笔记
+#[tauri::command]
+pub async fn create_note(
+    db: State<'_, DbPool>,
+    title: String,
+) -> Result<Note, String> {
+    info!("Command: create_note - title: {}", title);
+    let repo = NoteRepository::new(DbPool::clone(&db));
+    let content = r#"{"type":"doc","content":[{"type":"paragraph"}]}"#.to_string();
+    repo.create(title, content).await
+}
+
+/// 更新笔记
+#[tauri::command]
+pub async fn update_note(
+    db: State<'_, DbPool>,
+    id: String,
+    title: Option<String>,
+    content: Option<String>,
+    is_pinned: Option<bool>,
+    is_archived: Option<bool>,
+    is_favorite: Option<bool>,
+) -> Result<Note, String> {
+    info!("Command: update_note - id: {}", id);
+    let repo = NoteRepository::new(DbPool::clone(&db));
+    repo.update(id, title, content, is_pinned, is_archived, is_favorite).await
+}
+
+/// 删除笔记
+#[tauri::command]
+pub async fn delete_note(
+    db: State<'_, DbPool>,
+    id: String,
+) -> Result<(), String> {
+    info!("Command: delete_note - id: {}", id);
+    let repo = NoteRepository::new(DbPool::clone(&db));
+    repo.delete(id).await
+}
+
+/// 获取单个笔记
+#[tauri::command]
+pub async fn get_note(
+    db: State<'_, DbPool>,
+    id: String,
+) -> Result<Option<Note>, String> {
+    info!("Command: get_note - id: {}", id);
+    let repo = NoteRepository::new(DbPool::clone(&db));
+    repo.find_by_id(&id).await
+}
+
+/// 获取笔记列表
+#[tauri::command]
+pub async fn list_notes(
+    db: State<'_, DbPool>,
+    workspace_id: Option<String>,
+    offset: Option<u64>,
+    limit: Option<u64>,
+) -> Result<Vec<Note>, String> {
+    info!("Command: list_notes - workspace: {:?}, offset: {:?}, limit: {:?}", workspace_id, offset, limit);
+    let repo = NoteRepository::new(DbPool::clone(&db));
+    repo.list(workspace_id, offset.unwrap_or(0), limit.unwrap_or(50)).await
+}
+
+/// 搜索笔记
+#[tauri::command]
+pub async fn search_notes(
+    db: State<'_, DbPool>,
+    keyword: String,
+    limit: Option<usize>,
+) -> Result<Vec<Note>, String> {
+    info!("Command: search_notes - keyword: {}", keyword);
+    let repo = NoteRepository::new(DbPool::clone(&db));
+    repo.search(&keyword, limit.unwrap_or(20)).await
+}
