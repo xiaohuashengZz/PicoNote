@@ -5,7 +5,7 @@
  * 使用 invoke 调用 Rust 端的 Commands
  */
 import { invoke } from "@tauri-apps/api/core";
-import type { Note, SearchResult } from "../types/note";
+import type { Note } from "../types/note";
 import type { Tag } from "../types/tag";
 
 /**
@@ -76,7 +76,7 @@ export const noteApi = {
    * @param limit - 返回数量限制
    * @returns Promise<SearchResult[]> - 搜索结果列表
    */
-  search: (keyword: string, limit?: number): Promise<SearchResult[]> =>
+  search: (keyword: string, limit?: number): Promise<Note[]> =>
     invoke("search_notes", { keyword, limit }),
 };
 

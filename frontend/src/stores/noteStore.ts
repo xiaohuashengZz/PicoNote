@@ -8,7 +8,7 @@
  */
 import { create } from "zustand";
 import { noteApi } from "../lib/tauri";
-import type { Note, SearchResult, WorkspaceId } from "../types/note";
+import type { Note, WorkspaceId } from "../types/note";
 
 /**
  * 笔记 Store 状态接口
@@ -40,7 +40,7 @@ interface NoteActions {
   /** 删除笔记 */
   deleteNote: (id: string) => Promise<void>;
   /** 搜索笔记 */
-  searchNotes: (keyword: string) => Promise<SearchResult[]>;
+  searchNotes: (keyword: string) => Promise<Note[]>;
   /** 清除错误 */
   clearError: () => void;
   /** 设置当前笔记内容 */

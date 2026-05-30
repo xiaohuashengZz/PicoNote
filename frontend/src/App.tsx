@@ -9,6 +9,7 @@
 import { useEffect } from "react";
 import ThreeColumnLayout from "./components/Layout/ThreeColumnLayout";
 import GlobalSearch from "./components/Search/GlobalSearch";
+import Settings from "./components/Settings/Settings";
 import { useThemeStore } from "./stores/themeStore";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import "./App.css";
@@ -39,6 +40,9 @@ export default function App() {
 
       {/* 全局搜索弹窗 */}
       <GlobalSearch />
+
+      {/* 设置弹窗 */}
+      <Settings />
     </div>
   );
 }

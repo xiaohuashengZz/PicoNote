@@ -24,7 +24,7 @@ const PRESET_WORKSPACES: Workspace[] = [
  * 侧边栏组件
  */
 export default function Sidebar() {
-  const { activeWorkspaceId, setActiveWorkspace, toggleSidebar } = useUIStore();
+  const { activeWorkspaceId, setActiveWorkspace, toggleSidebar, openSearch, openSettings } = useUIStore();
   const { loadNotes } = useNoteStore();
 
   /**
@@ -54,7 +54,13 @@ export default function Sidebar() {
 
       {/* 搜索框 */}
       <div className="sidebar-search">
-        <input type="text" placeholder="搜索..." disabled />
+        <input
+          type="text"
+          placeholder="搜索... (Ctrl+K)"
+          readOnly
+          onClick={openSearch}
+          style={{ cursor: "pointer" }}
+        />
       </div>
 
       {/* 导航区域 */}
@@ -113,7 +119,7 @@ export default function Sidebar() {
 
       {/* 底部设置入口 */}
       <div className="sidebar-footer">
-        <button className="nav-item" onClick={() => {}}>
+        <button className="nav-item" onClick={openSettings}>
           <span className="nav-item-icon">⚙️</span>
           <span className="nav-item-text">设置</span>
         </button>

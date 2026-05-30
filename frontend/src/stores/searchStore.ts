@@ -7,7 +7,7 @@
  * @module searchStore
  */
 import { create } from "zustand";
-import type { SearchResult } from "../types/note";
+import type { Note, SearchResult } from "../types/note";
 
 /**
  * 搜索 Store 状态接口
@@ -40,6 +40,41 @@ interface SearchActions {
 }
 
 type SearchStore = SearchState & SearchActions;
+
+/**
+ * 从 Tiptap JSON 内容中提取纯文本
+ */
+function extractTextFromContent(content: string): string {
+  try {
+    const doc = JSON.parse(content);
+    const texts: string[] = [];
+    const walk = (node: any) => {
+      if (node.text) texts.push(node.text);
+      if (node.content) node.content.forEach(walk);
+    };
+    if (doc.content) doc.content.forEach(walk);
+    return texts.join(" ");
+  } catch {
+    return content;
+  }
+}
+
+/**
+ * 从内容中提取包含关键词的片段
+ */
+function extractSnippet(content: string, keyword: string): string {
+  const text = extractTextFromContent(content);
+  const idx = text.toLowerCase().indexOf(keyword.toLowerCase());
+  if (idx === -1) {
+    return text.length > 80 ? text.slice(0, 80) + "..." : text;
+  }
+  const start = Math.max(0, idx - 30);
+  const end = Math.min(text.length, idx + keyword.length + 50);
+  let snippet = text.slice(start, end);
+  if (start > 0) snippet = "..." + snippet;
+  if (end < text.length) snippet = snippet + "...";
+  return snippet;
+}
 
 /**
  * 搜索状态管理 Store
@@ -84,7 +119,13 @@ export const useSearchStore = create<SearchStore>((set, get) => ({
     try {
       // 动态导入 noteApi 以避免循环依赖
       const { noteApi } = await import("../lib/tauri");
-      const results = await noteApi.search(keyword);
+      const notes: Note[] = await noteApi.search(keyword);
+      const results: SearchResult[] = notes.map((note) => ({
+        note_id: note.id,
+        title: note.title,
+        snippet: extractSnippet(note.content, keyword),
+        rank: 1,
+      }));
       set({ results, isSearching: false });
 
       // 添加到搜索历史
