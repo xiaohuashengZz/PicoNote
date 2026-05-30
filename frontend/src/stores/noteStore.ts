@@ -113,14 +113,17 @@ export const useNoteStore = create<NoteStore>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const note = await noteApi.create(title);
-      set((state) => ({
-        notes: [note, ...state.notes],
+      // 从后端重新加载列表，确保数据一致
+      const notes = await noteApi.list();
+      set({
+        notes,
         currentNoteId: note.id,
         currentNote: note,
         isLoading: false,
-      }));
+      });
       return note;
     } catch (error) {
+      console.error("Failed to create note:", error);
       set({ error: String(error), isLoading: false });
       return null;
     }

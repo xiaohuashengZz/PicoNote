@@ -52,8 +52,7 @@ export function useKeyboardShortcuts(config: ShortcutConfig = {}) {
       // Ctrl/Cmd + K：打开全局搜索
       if (
         (e.ctrlKey || e.metaKey) &&
-        e.key === "k" &&
-        config.openSearch
+        e.key === "k"
       ) {
         e.preventDefault();
         toggleSearch();

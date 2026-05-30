@@ -71,6 +71,7 @@ export default function NoteList() {
     notes,
     currentNoteId,
     isLoading,
+    error,
     selectNote,
     createNote,
     deleteNote,
@@ -115,10 +116,18 @@ export default function NoteList() {
           className="note-list-create"
           onClick={handleCreateNote}
           title="新建笔记"
+          disabled={isLoading}
         >
           +
         </button>
       </div>
+
+      {/* 错误提示 */}
+      {error && (
+        <div className="note-list-error" style={{ padding: "8px 14px", fontSize: "12px", color: "#ef4444", background: "rgba(239,68,68,0.1)" }}>
+          {error}
+        </div>
+      )}
 
       {/* 笔记列表 */}
       <div className="note-list-content">
