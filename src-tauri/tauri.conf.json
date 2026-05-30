@@ -29,7 +29,8 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["nsis"],
+    "icon": ["icons/icon.ico"],
     "resources": [],
     "windows": {
       "wix": null,

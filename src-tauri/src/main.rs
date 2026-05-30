@@ -1,3 +1,5 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 //! PicoNote 主程序入口
 //!
 //! @description Tauri 桌面应用程序的入口点
