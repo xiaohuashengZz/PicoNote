@@ -4,6 +4,7 @@
 //! 提供前端调用的笔记 CRUD API
 
 use crate::infrastructure::database::{DbPool, repository::note_repository::{Note, NoteRepository}};
+use crate::application::commands::tag_commands::Tag;
 use tauri::State;
 use tracing::info;
 
@@ -80,4 +81,63 @@ pub async fn search_notes(
     info!("Command: search_notes - keyword: {}", keyword);
     let repo = NoteRepository::new(DbPool::clone(&db));
     repo.search(&keyword, limit.unwrap_or(20)).await
+}
+
+/// 获取笔记的标签
+#[tauri::command]
+pub async fn get_note_tags(
+    db: State<'_, DbPool>,
+    note_id: String,
+) -> Result<Vec<Tag>, String> {
+    info!("Command: get_note_tags - note_id: {}", note_id);
+    let conn = db.lock();
+
+    let mut stmt = conn
+        .prepare(
+            "SELECT t.id, t.name, t.color FROM tags t
+             INNER JOIN note_tags nt ON t.id = nt.tag_id
+             WHERE nt.note_id = ?1
+             ORDER BY t.name ASC",
+        )
+        .map_err(|e| e.to_string())?;
+
+    let tags = stmt
+        .query_map([&note_id], |row| {
+            Ok(Tag {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                color: row.get(2)?,
+            })
+        })
+        .map_err(|e| e.to_string())?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|e| e.to_string())?;
+
+    Ok(tags)
+}
+
+/// 设置笔记的标签（替换）
+#[tauri::command]
+pub async fn set_note_tags(
+    db: State<'_, DbPool>,
+    note_id: String,
+    tag_ids: Vec<String>,
+) -> Result<(), String> {
+    info!("Command: set_note_tags - note_id: {}, tags: {:?}", note_id, tag_ids);
+    let conn = db.lock();
+
+    // 删除旧关联
+    conn.execute("DELETE FROM note_tags WHERE note_id = ?1", [&note_id])
+        .map_err(|e| e.to_string())?;
+
+    // 插入新关联
+    for tag_id in &tag_ids {
+        conn.execute(
+            "INSERT INTO note_tags (note_id, tag_id) VALUES (?1, ?2)",
+            [&note_id, tag_id],
+        )
+        .map_err(|e| e.to_string())?;
+    }
+
+    Ok(())
 }

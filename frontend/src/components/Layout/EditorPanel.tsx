@@ -1,24 +1,32 @@
-/**
- * 编辑器面板组件
- *
- * @description 编辑器主面板
- * 包含工具栏、Tiptap 编辑器和元信息栏
- *
- * @module EditorPanel
- */
+import { useEffect, useState } from "react";
 import { useNoteStore } from "../../stores/noteStore";
+import { useTagStore } from "../../stores/tagStore";
 import { useAutoSave } from "../../hooks/useAutoSave";
+import { noteApi } from "../../lib/tauri";
 import TiptapEditor from "../Editor/TiptapEditor";
+import type { Tag } from "../../types/tag";
 import "./EditorPanel.css";
 
-/**
- * 编辑器面板组件
- */
 export default function EditorPanel() {
   const { currentNote, updateNote, setCurrentNoteTitle, setCurrentNoteContent, createNote } =
     useNoteStore();
+  const { tags, loadTags } = useTagStore();
+  const [noteTags, setNoteTags] = useState<Tag[]>([]);
+  const [showTagPicker, setShowTagPicker] = useState(false);
 
-  // 自动保存：当内容变化时，自动保存到后端
+  useEffect(() => {
+    loadTags();
+  }, [loadTags]);
+
+  useEffect(() => {
+    if (currentNote?.id) {
+      noteApi.getTags(currentNote.id).then(setNoteTags).catch(() => setNoteTags([]));
+    } else {
+      setNoteTags([]);
+    }
+    setShowTagPicker(false);
+  }, [currentNote?.id]);
+
   useAutoSave(
     currentNote?.id ?? null,
     currentNote?.content ?? "",
@@ -26,60 +34,55 @@ export default function EditorPanel() {
     { delay: 500 }
   );
 
-  /**
-   * 处理标题变化
-   */
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value;
-    setCurrentNoteTitle(newTitle);
+    setCurrentNoteTitle(e.target.value);
   };
 
-  /**
-   * 处理标题失焦保存
-   */
   const handleTitleBlur = () => {
     if (currentNote) {
       updateNote(currentNote.id, { title: currentNote.title });
     }
   };
 
-  /**
-   * 处理内容变化
-   */
   const handleContentChange = (content: string) => {
     setCurrentNoteContent(content);
   };
 
-  /**
-   * 处理内容保存
-   */
   const handleContentSave = () => {
     if (currentNote) {
-      updateNote(currentNote.id, {
-        content: currentNote.content,
-      });
+      updateNote(currentNote.id, { content: currentNote.content });
     }
   };
 
-  /**
-   * 切换收藏状态
-   */
   const handleToggleFavorite = () => {
     if (currentNote) {
       updateNote(currentNote.id, { is_favorite: !currentNote.is_favorite });
     }
   };
 
-  /**
-   * 切换置顶状态
-   */
   const handleTogglePinned = () => {
     if (currentNote) {
       updateNote(currentNote.id, { is_pinned: !currentNote.is_pinned });
     }
   };
 
-  // 没有选中笔记时显示空状态
+  const handleToggleTag = async (tag: Tag) => {
+    if (!currentNote) return;
+    const isAttached = noteTags.some((t) => t.id === tag.id);
+    const newTagIds = isAttached
+      ? noteTags.filter((t) => t.id !== tag.id).map((t) => t.id)
+      : [...noteTags.map((t) => t.id), tag.id];
+    try {
+      await noteApi.setTags(currentNote.id, newTagIds);
+      setNoteTags(isAttached ? noteTags.filter((t) => t.id !== tag.id) : [...noteTags, tag]);
+      if (!isAttached) {
+        setShowTagPicker(false);
+      }
+    } catch (e) {
+      console.error("Failed to set note tags:", e);
+    }
+  };
+
   if (!currentNote) {
     return (
       <div className="editor-panel empty">
@@ -100,7 +103,6 @@ export default function EditorPanel() {
 
   return (
     <div className="editor-panel">
-      {/* 编辑器头部 */}
       <div className="editor-header">
         <div className="editor-breadcrumb">
           <span>我的笔记</span> › <span>{currentNote.title || "无标题"}</span>
@@ -120,13 +122,9 @@ export default function EditorPanel() {
           >
             {currentNote.is_pinned ? "📌" : "📍"}
           </button>
-          <button className="editor-action-btn" title="更多">
-            •••
-          </button>
         </div>
       </div>
 
-      {/* 标题输入框 */}
       <div className="editor-title-container">
         <input
           type="text"
@@ -138,7 +136,47 @@ export default function EditorPanel() {
         />
       </div>
 
-      {/* Tiptap 编辑器 */}
+      <div className="editor-tags-bar">
+        {noteTags.map((tag) => (
+          <span key={tag.id} className="editor-tag" style={{ borderColor: tag.color }}>
+            <span className="editor-tag-dot" style={{ background: tag.color }} />
+            {tag.name}
+            <button className="editor-tag-remove" onClick={() => handleToggleTag(tag)}>
+              ×
+            </button>
+          </span>
+        ))}
+        <button
+          className="editor-tag-add"
+          onClick={() => setShowTagPicker(!showTagPicker)}
+        >
+          + 标签
+        </button>
+      </div>
+
+      {showTagPicker && (
+        <div className="tag-picker-inline">
+          {tags.length === 0 ? (
+            <div className="tag-picker-empty">暂无标签，请先在侧边栏创建</div>
+          ) : (
+            tags.map((tag) => {
+              const isSelected = noteTags.some((t) => t.id === tag.id);
+              return (
+                <button
+                  key={tag.id}
+                  className={`tag-picker-item ${isSelected ? "active" : ""}`}
+                  onClick={() => handleToggleTag(tag)}
+                >
+                  <span className="tag-picker-dot" style={{ background: tag.color }} />
+                  {tag.name}
+                  {isSelected && <span className="tag-picker-check">✓</span>}
+                </button>
+              );
+            })
+          )}
+        </div>
+      )}
+
       <div className="editor-content">
         <TiptapEditor
           content={currentNote.content}
@@ -147,7 +185,6 @@ export default function EditorPanel() {
         />
       </div>
 
-      {/* 底部状态栏 */}
       <div className="editor-footer">
         <span className="editor-status">
           {currentNote.updated_at

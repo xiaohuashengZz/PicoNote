@@ -1,38 +1,48 @@
-/**
- * 侧边栏组件
- *
- * @description 工作区导航侧边栏
- * 显示工作区列表、标签列表和快捷操作
- *
- * @module Sidebar
- */
+import { useEffect, useState } from "react";
 import { useUIStore } from "../../stores/uiStore";
 import { useNoteStore } from "../../stores/noteStore";
+import { useTagStore } from "../../stores/tagStore";
 import type { Workspace, WorkspaceId } from "../../types/note";
 import "./Sidebar.css";
 
-/**
- * 预设工作区列表
- */
 const PRESET_WORKSPACES: Workspace[] = [
   { id: "today", name: "今天", icon: "📅" },
   { id: "recent", name: "最近 7 天", icon: "🕐" },
   { id: "favorites", name: "收藏", icon: "⭐" },
 ];
 
-/**
- * 侧边栏组件
- */
+const PRESET_COLORS = [
+  "#f59e0b", "#10b981", "#8b5cf6", "#3b82f6",
+  "#ef4444", "#ec4899", "#14b8a6", "#f97316",
+];
+
 export default function Sidebar() {
   const { activeWorkspaceId, setActiveWorkspace, toggleSidebar, openSearch, openSettings } = useUIStore();
   const { loadNotes } = useNoteStore();
+  const { tags, loadTags, createTag, deleteTag } = useTagStore();
+  const [showAddTag, setShowAddTag] = useState(false);
+  const [newTagName, setNewTagName] = useState("");
+  const [newTagColor, setNewTagColor] = useState(PRESET_COLORS[0]);
 
-  /**
-   * 切换工作区
-   */
+  useEffect(() => {
+    loadTags();
+  }, [loadTags]);
+
   const handleWorkspaceClick = async (workspaceId: WorkspaceId | null) => {
     setActiveWorkspace(workspaceId);
     await loadNotes(workspaceId ?? undefined);
+  };
+
+  const handleCreateTag = async () => {
+    if (!newTagName.trim()) return;
+    await createTag(newTagName.trim(), newTagColor);
+    setNewTagName("");
+    setShowAddTag(false);
+  };
+
+  const handleDeleteTag = async (e: React.MouseEvent, tagId: string) => {
+    e.stopPropagation();
+    await deleteTag(tagId);
   };
 
   return (
@@ -43,11 +53,7 @@ export default function Sidebar() {
           <div className="workspace-icon">📝</div>
           <span className="workspace-name">我的笔记</span>
         </div>
-        <button
-          className="sidebar-toggle"
-          onClick={toggleSidebar}
-          title="折叠侧边栏"
-        >
+        <button className="sidebar-toggle" onClick={toggleSidebar} title="折叠侧边栏">
           ◀
         </button>
       </div>
@@ -68,8 +74,6 @@ export default function Sidebar() {
         {/* 快捷访问分区 */}
         <div className="nav-section">
           <div className="nav-section-title">快捷访问</div>
-
-          {/* 全部笔记 */}
           <button
             className={`nav-item ${activeWorkspaceId === null ? "active" : ""}`}
             onClick={() => handleWorkspaceClick(null)}
@@ -77,14 +81,10 @@ export default function Sidebar() {
             <span className="nav-item-icon">📚</span>
             <span className="nav-item-text">全部笔记</span>
           </button>
-
-          {/* 预设工作区 */}
           {PRESET_WORKSPACES.map((ws) => (
             <button
               key={ws.id}
-              className={`nav-item ${
-                activeWorkspaceId === ws.id ? "active" : ""
-              }`}
+              className={`nav-item ${activeWorkspaceId === ws.id ? "active" : ""}`}
               onClick={() => handleWorkspaceClick(ws.id)}
             >
               <span className="nav-item-icon">{ws.icon}</span>
@@ -95,25 +95,68 @@ export default function Sidebar() {
 
         {/* 标签分区 */}
         <div className="nav-section">
-          <div className="nav-section-title">标签</div>
-          <button className="nav-item">
-            <span className="nav-item-icon" style={{ color: "#f59e0b" }}>
-              ●
-            </span>
-            <span className="nav-item-text"># 工作</span>
-          </button>
-          <button className="nav-item">
-            <span className="nav-item-icon" style={{ color: "#10b981" }}>
-              ●
-            </span>
-            <span className="nav-item-text"># 灵感</span>
-          </button>
-          <button className="nav-item">
-            <span className="nav-item-icon" style={{ color: "#8b5cf6" }}>
-              ●
-            </span>
-            <span className="nav-item-text"># 架构设计</span>
-          </button>
+          <div className="nav-section-title">
+            标签
+            <button
+              className="nav-section-add"
+              onClick={() => setShowAddTag(!showAddTag)}
+              title="添加标签"
+            >
+              +
+            </button>
+          </div>
+
+          {/* 添加标签表单 */}
+          {showAddTag && (
+            <div className="tag-add-form">
+              <input
+                type="text"
+                className="tag-add-input"
+                placeholder="标签名称"
+                value={newTagName}
+                onChange={(e) => setNewTagName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleCreateTag()}
+                autoFocus
+              />
+              <div className="tag-color-picker">
+                {PRESET_COLORS.map((color) => (
+                  <button
+                    key={color}
+                    className={`tag-color-btn ${newTagColor === color ? "active" : ""}`}
+                    style={{ background: color }}
+                    onClick={() => setNewTagColor(color)}
+                  />
+                ))}
+              </div>
+              <div className="tag-add-actions">
+                <button className="tag-add-confirm" onClick={handleCreateTag}>确定</button>
+                <button className="tag-add-cancel" onClick={() => setShowAddTag(false)}>取消</button>
+              </div>
+            </div>
+          )}
+
+          {/* 标签列表 */}
+          {tags.map((tag) => (
+            <button
+              key={tag.id}
+              className={`nav-item ${activeWorkspaceId === `tag:${tag.id}` ? "active" : ""}`}
+              onClick={() => handleWorkspaceClick(`tag:${tag.id}`)}
+            >
+              <span className="nav-item-icon" style={{ color: tag.color }}>●</span>
+              <span className="nav-item-text"># {tag.name}</span>
+              <span
+                className="nav-item-delete"
+                onClick={(e) => handleDeleteTag(e, tag.id)}
+                title="删除标签"
+              >
+                ×
+              </span>
+            </button>
+          ))}
+
+          {tags.length === 0 && !showAddTag && (
+            <div className="tag-empty">暂无标签</div>
+          )}
         </div>
       </nav>
 

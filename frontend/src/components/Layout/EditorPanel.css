@@ -56,6 +56,122 @@
   background: var(--accent-dark);
 }
 
+/* 标签栏 */
+.editor-tags-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 24px;
+  flex-wrap: wrap;
+}
+
+.editor-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+}
+
+.editor-tag-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.editor-tag-remove {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 0;
+  margin-left: 2px;
+  line-height: 1;
+}
+
+.editor-tag-remove:hover {
+  color: #ef4444;
+}
+
+.tag-picker-wrapper {
+  position: relative;
+}
+
+.editor-tag-add {
+  border: 1px dashed var(--border);
+  background: transparent;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.editor-tag-add:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 内联标签选择器 */
+.tag-picker-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 6px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.tag-picker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  border-radius: 16px;
+  font-size: 12px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag-picker-item:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.tag-picker-item.active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.tag-picker-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tag-picker-check {
+  margin-left: 2px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tag-picker-empty {
+  padding: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
 /* 编辑器头部 */
 .editor-header {
   display: flex;
@@ -128,10 +244,11 @@
 
 /* 底部状态栏 */
 .editor-footer {
-  padding: 8px 18px;
+  padding: 4px 18px;
   border-top: 1px solid var(--border);
   font-size: 11px;
   color: var(--text-muted);
+  line-height: 1.2;
 }
 
 .editor-status {

@@ -52,6 +52,8 @@ fn main() {
             piconote_lib::application::commands::tag_commands::update_tag,
             piconote_lib::application::commands::tag_commands::delete_tag,
             piconote_lib::application::commands::tag_commands::list_tags,
+            piconote_lib::application::commands::note_commands::get_note_tags,
+            piconote_lib::application::commands::note_commands::set_note_tags,
         ])
         .run(tauri::generate_context!())
         .expect("Error while running PicoNote application");

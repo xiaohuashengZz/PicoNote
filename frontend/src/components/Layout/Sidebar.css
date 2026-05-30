@@ -153,3 +153,150 @@
   padding: 8px;
   border-top: 1px solid var(--border);
 }
+
+/* 标签区域 */
+.nav-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-section-add {
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.nav-section-add:hover {
+  background: var(--hover);
+  color: var(--text-primary);
+}
+
+/* 标签删除按钮 */
+.nav-item-delete {
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.nav-item:hover .nav-item-delete {
+  opacity: 1;
+}
+
+.nav-item-delete:hover {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ef4444;
+}
+
+/* 添加标签表单 */
+.tag-add-form {
+  padding: 8px;
+  margin: 4px 8px;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.tag-add-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 12px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.tag-add-input:focus {
+  border-color: var(--accent);
+}
+
+.tag-color-picker {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.tag-color-btn {
+  width: 18px;
+  height: 18px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag-color-btn:hover {
+  transform: scale(1.2);
+}
+
+.tag-color-btn.active {
+  border-color: var(--text-primary);
+  transform: scale(1.2);
+}
+
+.tag-add-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.tag-add-confirm {
+  flex: 1;
+  padding: 4px 8px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tag-add-confirm:hover {
+  background: var(--accent-dark);
+}
+
+.tag-add-cancel {
+  flex: 1;
+  padding: 4px 8px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tag-add-cancel:hover {
+  background: var(--hover);
+}
+
+.tag-empty {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
