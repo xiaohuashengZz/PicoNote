@@ -23,6 +23,11 @@ frontend/node_modules/
 *.log
 npm-debug.log*
 
+# Database
+*.db
+*.db-shm
+*.db-wal
+
 # Lock files (optional - uncomment if you want to commit them)
 # package-lock.json
 # yarn.lock

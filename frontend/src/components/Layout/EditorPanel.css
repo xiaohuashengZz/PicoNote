@@ -39,6 +39,23 @@
   opacity: 0.7;
 }
 
+.editor-create-btn {
+  padding: 10px 24px;
+  margin: 16px 0;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.editor-create-btn:hover {
+  background: var(--accent-dark);
+}
+
 /* 编辑器头部 */
 .editor-header {
   display: flex;

@@ -15,7 +15,7 @@ import "./EditorPanel.css";
  * 编辑器面板组件
  */
 export default function EditorPanel() {
-  const { currentNote, updateNote, setCurrentNoteTitle, setCurrentNoteContent } =
+  const { currentNote, updateNote, setCurrentNoteTitle, setCurrentNoteContent, createNote } =
     useNoteStore();
 
   // 自动保存：当内容变化时，自动保存到后端
@@ -86,6 +86,12 @@ export default function EditorPanel() {
         <div className="editor-empty">
           <div className="editor-empty-icon">📝</div>
           <p>选择一篇笔记开始编辑</p>
+          <button
+            className="editor-create-btn"
+            onClick={async () => await createNote("新笔记")}
+          >
+            + 新建笔记
+          </button>
           <p className="editor-empty-hint">或按 Ctrl+N 创建新笔记</p>
         </div>
       </div>

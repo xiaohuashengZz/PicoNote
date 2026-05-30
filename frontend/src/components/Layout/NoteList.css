@@ -27,18 +27,20 @@
 }
 
 .note-list-create {
-  width: 24px;
-  height: 24px;
-  border: none;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--accent);
   background: var(--accent);
   color: white;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.2s;
+  flex-shrink: 0;
 }
 
 .note-list-create:hover {
@@ -185,4 +187,32 @@
 
 .note-time {
   color: var(--text-muted);
+}
+
+/* 底部新建按钮 */
+.note-list-footer {
+  padding: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.note-list-footer-create {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.note-list-footer-create:hover {
+  background: var(--accent-dark);
+}
+
+.note-list-footer-create:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
