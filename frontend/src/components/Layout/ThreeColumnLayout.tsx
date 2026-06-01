@@ -24,8 +24,7 @@ export default function ThreeColumnLayout() {
   const { sidebarCollapsed, noteListCollapsed } = useUIStore();
 
   return (
-    <div className="three-column-layout">
-      {/* 左侧工作区侧边栏 */}
+    <div className={`three-column-layout ${sidebarCollapsed ? "collapsed" : ""}`}>
       <aside
         className={`layout-sidebar ${sidebarCollapsed ? "collapsed" : ""}`}
       >

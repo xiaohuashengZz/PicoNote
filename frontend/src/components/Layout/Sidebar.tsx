@@ -17,7 +17,14 @@ const PRESET_COLORS = [
 ];
 
 export default function Sidebar() {
-  const { activeWorkspaceId, setActiveWorkspace, toggleSidebar, openSearch, openSettings } = useUIStore();
+  const {
+    activeWorkspaceId,
+    setActiveWorkspace,
+    sidebarCollapsed,
+    toggleSidebar,
+    openSearch,
+    openSettings,
+  } = useUIStore();
   const { loadNotes } = useNoteStore();
   const { tags, loadTags, createTag, deleteTag } = useTagStore();
   const [showAddTag, setShowAddTag] = useState(false);
@@ -46,37 +53,41 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${sidebarCollapsed ? "collapsed" : ""}`}>
       {/* 工作区头部 */}
       <div className="sidebar-header">
         <div className="workspace-brand">
-          <div className="workspace-icon">📝</div>
+          <div className="workspace-icon" title="我的笔记">📝</div>
           <span className="workspace-name">我的笔记</span>
         </div>
         <button className="sidebar-toggle" onClick={toggleSidebar} title="折叠侧边栏">
-          ◀
+          {sidebarCollapsed ? "▶" : "◀"}
         </button>
       </div>
 
-      {/* 搜索框 */}
+      {/* 搜索框（折叠时只显示图标） */}
       <div className="sidebar-search">
-        <input
-          type="text"
-          placeholder="搜索... (Ctrl+K)"
-          readOnly
+        <button
+          className="sidebar-search-btn"
           onClick={openSearch}
-          style={{ cursor: "pointer" }}
-        />
+          title="搜索 (Ctrl+K)"
+        >
+          <span className="nav-item-icon">🔍</span>
+          <span className="nav-item-text">搜索... (Ctrl+K)</span>
+        </button>
       </div>
 
       {/* 导航区域 */}
       <nav className="sidebar-nav">
         {/* 快捷访问分区 */}
         <div className="nav-section">
-          <div className="nav-section-title">快捷访问</div>
+          <div className="nav-section-title">
+            <span className="nav-section-label">快捷访问</span>
+          </div>
           <button
             className={`nav-item ${activeWorkspaceId === null ? "active" : ""}`}
             onClick={() => handleWorkspaceClick(null)}
+            title="全部笔记"
           >
             <span className="nav-item-icon">📚</span>
             <span className="nav-item-text">全部笔记</span>
@@ -86,6 +97,7 @@ export default function Sidebar() {
               key={ws.id}
               className={`nav-item ${activeWorkspaceId === ws.id ? "active" : ""}`}
               onClick={() => handleWorkspaceClick(ws.id)}
+              title={ws.name}
             >
               <span className="nav-item-icon">{ws.icon}</span>
               <span className="nav-item-text">{ws.name}</span>
@@ -96,7 +108,7 @@ export default function Sidebar() {
         {/* 标签分区 */}
         <div className="nav-section">
           <div className="nav-section-title">
-            标签
+            <span className="nav-section-label">标签</span>
             <button
               className="nav-section-add"
               onClick={() => setShowAddTag(!showAddTag)}
@@ -107,7 +119,7 @@ export default function Sidebar() {
           </div>
 
           {/* 添加标签表单 */}
-          {showAddTag && (
+          {showAddTag && !sidebarCollapsed && (
             <div className="tag-add-form">
               <input
                 type="text"
@@ -135,12 +147,17 @@ export default function Sidebar() {
             </div>
           )}
 
+          {showAddTag && sidebarCollapsed && (
+            <div className="tag-add-collapsed-hint">展开侧边栏以添加标签</div>
+          )}
+
           {/* 标签列表 */}
           {tags.map((tag) => (
             <button
               key={tag.id}
               className={`nav-item ${activeWorkspaceId === `tag:${tag.id}` ? "active" : ""}`}
               onClick={() => handleWorkspaceClick(`tag:${tag.id}`)}
+              title={`# ${tag.name}`}
             >
               <span className="nav-item-icon" style={{ color: tag.color }}>●</span>
               <span className="nav-item-text"># {tag.name}</span>
@@ -155,14 +172,16 @@ export default function Sidebar() {
           ))}
 
           {tags.length === 0 && !showAddTag && (
-            <div className="tag-empty">暂无标签</div>
+            <div className="tag-empty">
+              <span className="nav-item-text">暂无标签</span>
+            </div>
           )}
         </div>
       </nav>
 
       {/* 底部设置入口 */}
       <div className="sidebar-footer">
-        <button className="nav-item" onClick={openSettings}>
+        <button className="nav-item" onClick={openSettings} title="设置">
           <span className="nav-item-icon">⚙️</span>
           <span className="nav-item-text">设置</span>
         </button>

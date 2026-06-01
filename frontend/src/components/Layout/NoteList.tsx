@@ -171,17 +171,6 @@ export default function NoteList() {
           ))
         )}
       </div>
-
-      {/* 底部新建按钮 */}
-      <div className="note-list-footer">
-        <button
-          className="note-list-footer-create"
-          onClick={handleCreateNote}
-          disabled={isLoading}
-        >
-          + 新建笔记
-        </button>
-      </div>
     </div>
   );
 }

@@ -16,8 +16,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
+  height: 44px;
+  padding: 0 14px;
   border-bottom: 1px solid var(--border);
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .note-list-title {
@@ -187,32 +190,4 @@
 
 .note-time {
   color: var(--text-muted);
-}
-
-/* 底部新建按钮 */
-.note-list-footer {
-  padding: 8px;
-  border-top: 1px solid var(--border);
-}
-
-.note-list-footer-create {
-  width: 100%;
-  padding: 8px 12px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.note-list-footer-create:hover {
-  background: var(--accent-dark);
-}
-
-.note-list-footer-create:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }

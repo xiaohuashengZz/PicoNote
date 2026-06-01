@@ -8,22 +8,26 @@
 /* 主布局容器 - 三栏网格 */
 .three-column-layout {
   display: grid;
-  grid-template-columns: auto 260px 1fr;
-  height: calc(100vh - 40px);
+  grid-template-columns: 220px 260px 1fr;
+  height: 100vh;
   overflow: hidden;
+  transition: grid-template-columns 0.3s ease;
+}
+
+/* 折叠态：整网格第一列缩到 52px */
+.three-column-layout.collapsed {
+  grid-template-columns: 52px 260px 1fr;
 }
 
 /* 侧边栏样式 */
 .layout-sidebar {
-  width: 220px;
   background: var(--bg-secondary);
   border-right: 1px solid var(--border);
-  overflow-y: auto;
-  transition: width 0.3s ease;
+  overflow: visible;
 }
 
-.layout-sidebar.collapsed {
-  width: 50px;
+.layout-sidebar.collapsed .sidebar {
+  width: 52px;
 }
 
 /* 笔记列表样式 */
