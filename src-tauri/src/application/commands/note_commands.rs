@@ -9,7 +9,7 @@ use tauri::State;
 use tracing::info;
 
 /// 创建新笔记
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub async fn create_note(
     db: State<'_, DbPool>,
     title: String,
@@ -21,7 +21,7 @@ pub async fn create_note(
 }
 
 /// 更新笔记
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub async fn update_note(
     db: State<'_, DbPool>,
     id: String,
@@ -37,7 +37,7 @@ pub async fn update_note(
 }
 
 /// 删除笔记
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub async fn delete_note(
     db: State<'_, DbPool>,
     id: String,
@@ -48,7 +48,7 @@ pub async fn delete_note(
 }
 
 /// 获取单个笔记
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub async fn get_note(
     db: State<'_, DbPool>,
     id: String,
@@ -59,7 +59,7 @@ pub async fn get_note(
 }
 
 /// 获取笔记列表
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub async fn list_notes(
     db: State<'_, DbPool>,
     workspace_id: Option<String>,
@@ -72,7 +72,7 @@ pub async fn list_notes(
 }
 
 /// 搜索笔记
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub async fn search_notes(
     db: State<'_, DbPool>,
     keyword: String,
@@ -84,7 +84,7 @@ pub async fn search_notes(
 }
 
 /// 获取笔记的标签
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub async fn get_note_tags(
     db: State<'_, DbPool>,
     note_id: String,
@@ -117,7 +117,7 @@ pub async fn get_note_tags(
 }
 
 /// 设置笔记的标签（替换）
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub async fn set_note_tags(
     db: State<'_, DbPool>,
     note_id: String,
