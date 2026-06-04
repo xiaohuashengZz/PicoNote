@@ -1,6 +1,6 @@
 [package]
 name = "piconote"
-version = "0.1.0"
+version = "1.0.1"
 description = "A lightweight local note-taking application"
 authors = ["sPeanut"]
 edition = "2021"
@@ -12,6 +12,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 [build-dependencies]
 tauri-build = { version = "2.0", features = [] }
 
+
 [dependencies]
 # Tauri framework
 tauri = { version = "2.0", features = ["devtools"] }
@@ -21,8 +22,10 @@ tauri-plugin-shell = "2.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
+
 # Database - SQLite via rusqlite (simpler than sea-orm for now)
 rusqlite = { version = "0.31", features = ["bundled"] }
+
 
 # Async runtime
 tokio = { version = "1.0", features = ["full"] }
@@ -33,6 +36,8 @@ chrono = { version = "0.4", features = ["serde"] }
 thiserror = "1.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+
 
 # Thread-safe primitives
 parking_lot = "0.12"
