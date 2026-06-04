@@ -4,12 +4,12 @@ import type { Tag } from "../types/tag";
 
 export const noteApi = {
   create: (title: string): Promise<Note> => invoke("create_note", { title }),
-  update: (id: string, updates: { title?: string; content?: string; is_pinned?: boolean; is_archived?: boolean; is_favorite?: boolean }): Promise<Note> =>
+  update: (id: string, updates: { title?: string; content?: string; isPinned?: boolean; isArchived?: boolean; isFavorite?: boolean }): Promise<Note> =>
     invoke("update_note", { id, ...updates }),
   delete: (id: string): Promise<void> => invoke("delete_note", { id }),
   get: (id: string): Promise<Note | null> => invoke("get_note", { id }),
   list: (workspaceId?: string, offset?: number, limit?: number): Promise<Note[]> =>
-    invoke("list_notes", { workspace_id: workspaceId, offset, limit }),
+    invoke("list_notes", { workspaceId, offset, limit }),
   search: (keyword: string, limit?: number): Promise<Note[]> =>
     invoke("search_notes", { keyword, limit }),
   getTags: (noteId: string): Promise<Tag[]> =>

@@ -36,7 +36,7 @@ interface NoteActions {
   /** 创建笔记 */
   createNote: (title: string) => Promise<Note | null>;
   /** 更新笔记 */
-  updateNote: (id: string, updates: Partial<Note>) => Promise<void>;
+  updateNote: (id: string, updates: Partial<Note> & { isFavorite?: boolean; isPinned?: boolean; isArchived?: boolean }) => Promise<void>;
   /** 删除笔记 */
   deleteNote: (id: string) => Promise<void>;
   /** 搜索笔记 */

@@ -56,13 +56,13 @@ export default function EditorPanel() {
 
   const handleToggleFavorite = () => {
     if (currentNote) {
-      updateNote(currentNote.id, { is_favorite: !currentNote.is_favorite });
+      updateNote(currentNote.id, { isFavorite: !currentNote.is_favorite });
     }
   };
 
   const handleTogglePinned = () => {
     if (currentNote) {
-      updateNote(currentNote.id, { is_pinned: !currentNote.is_pinned });
+      updateNote(currentNote.id, { isPinned: !currentNote.is_pinned });
     }
   };
 

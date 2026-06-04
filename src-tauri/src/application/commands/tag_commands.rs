@@ -16,7 +16,7 @@ pub struct Tag {
 }
 
 /// 创建标签
-#[tauri::command(rename_all = "snake_case")]
+#[tauri::command]
 pub async fn create_tag(
     db: State<'_, DbPool>,
     name: String,
@@ -38,7 +38,7 @@ pub async fn create_tag(
 }
 
 /// 更新标签
-#[tauri::command(rename_all = "snake_case")]
+#[tauri::command]
 pub async fn update_tag(
     db: State<'_, DbPool>,
     id: String,
@@ -74,7 +74,7 @@ pub async fn update_tag(
 }
 
 /// 删除标签
-#[tauri::command(rename_all = "snake_case")]
+#[tauri::command]
 pub async fn delete_tag(
     db: State<'_, DbPool>,
     id: String,
@@ -87,7 +87,7 @@ pub async fn delete_tag(
 }
 
 /// 获取标签列表
-#[tauri::command(rename_all = "snake_case")]
+#[tauri::command]
 pub async fn list_tags(
     db: State<'_, DbPool>,
 ) -> Result<Vec<Tag>, String> {

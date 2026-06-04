@@ -189,34 +189,44 @@ impl NoteRepository {
     ) -> Result<Vec<Note>, String> {
         let conn = self.db.lock();
 
-        let mut sql = String::from("SELECT id, title, content, is_pinned, is_archived, is_favorite, created_at, updated_at FROM notes WHERE 1=1");
+        let mut sql = String::from(
+            "SELECT id, title, content, is_pinned, is_archived, is_favorite, created_at, updated_at FROM notes WHERE 1=1",
+        );
         let mut params: Vec<Box<dyn rusqlite::ToSql>> = Vec::new();
 
         // 根据工作区筛选
         if let Some(ws_id) = &workspace_id {
-            match ws_id.as_str() {
-                "today" => {
-                    let today_start = chrono::Utc::now()
-                        .date_naive()
-                        .and_hms_opt(0, 0, 0)
-                        .unwrap()
-                        .and_utc()
-                        .timestamp_millis();
-                    sql.push_str(" AND updated_at >= ?");
-                    params.push(Box::new(today_start));
+            if let Some(tag_id) = ws_id.strip_prefix("tag:") {
+                sql = String::from(
+                    "SELECT n.id, n.title, n.content, n.is_pinned, n.is_archived, n.is_favorite, n.created_at, n.updated_at \
+                     FROM notes n INNER JOIN note_tags nt ON n.id = nt.note_id WHERE nt.tag_id = ?",
+                );
+                params.push(Box::new(tag_id.to_string()));
+            } else {
+                match ws_id.as_str() {
+                    "today" => {
+                        let today_start = chrono::Utc::now()
+                            .date_naive()
+                            .and_hms_opt(0, 0, 0)
+                            .unwrap()
+                            .and_utc()
+                            .timestamp_millis();
+                        sql.push_str(" AND updated_at >= ?");
+                        params.push(Box::new(today_start));
+                    }
+                    "recent" => {
+                        let week_ago = chrono::Utc::now().timestamp_millis() - (7 * 24 * 60 * 60 * 1000);
+                        sql.push_str(" AND updated_at >= ?");
+                        params.push(Box::new(week_ago));
+                    }
+                    "favorites" => {
+                        sql.push_str(" AND is_favorite = 1");
+                    }
+                    "archived" => {
+                        sql.push_str(" AND is_archived = 1");
+                    }
+                    _ => {}
                 }
-                "recent" => {
-                    let week_ago = chrono::Utc::now().timestamp_millis() - (7 * 24 * 60 * 60 * 1000);
-                    sql.push_str(" AND updated_at >= ?");
-                    params.push(Box::new(week_ago));
-                }
-                "favorites" => {
-                    sql.push_str(" AND is_favorite = 1");
-                }
-                "archived" => {
-                    sql.push_str(" AND is_archived = 1");
-                }
-                _ => {}
             }
         } else {
             // 默认排除已归档的笔记

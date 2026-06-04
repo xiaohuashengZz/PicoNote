@@ -6,7 +6,7 @@
  *
  * @module NoteList
  */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNoteStore } from "../../stores/noteStore";
 import "./NoteList.css";
 
@@ -77,6 +77,7 @@ export default function NoteList() {
     deleteNote,
     loadNotes,
   } = useNoteStore();
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   // 初始加载笔记列表
   useEffect(() => {
@@ -98,14 +99,24 @@ export default function NoteList() {
   };
 
   /**
-   * 处理删除笔记
+   * 处理删除笔记（打开确认弹窗）
    */
-  const handleDeleteNote = async (e: React.MouseEvent, id: string) => {
+  const handleDeleteNote = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (confirm("确定要删除这篇笔记吗？")) {
-      await deleteNote(id);
+    setPendingDeleteId(id);
+  };
+
+  /**
+   * 确认删除
+   */
+  const confirmDelete = async () => {
+    if (pendingDeleteId) {
+      await deleteNote(pendingDeleteId);
+      setPendingDeleteId(null);
     }
   };
+
+  const pendingDeleteNote = pendingDeleteId ? notes.find((n) => n.id === pendingDeleteId) : null;
 
   return (
     <div className="note-list">
@@ -171,6 +182,35 @@ export default function NoteList() {
           ))
         )}
       </div>
+
+      {/* 删除确认弹窗 */}
+      {pendingDeleteId && (
+        <div className="delete-confirm-overlay" onClick={() => setPendingDeleteId(null)}>
+          <div className="delete-confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="delete-confirm-icon">🗑️</div>
+            <h3 className="delete-confirm-title">删除笔记</h3>
+            <p className="delete-confirm-text">
+              确定要删除 <strong>「{pendingDeleteNote?.title || "无标题"}」</strong> 吗？
+              <br />
+              <span className="delete-confirm-hint">该操作不可撤销</span>
+            </p>
+            <div className="delete-confirm-actions">
+              <button
+                className="delete-confirm-cancel"
+                onClick={() => setPendingDeleteId(null)}
+              >
+                取消
+              </button>
+              <button
+                className="delete-confirm-confirm"
+                onClick={confirmDelete}
+              >
+                删除
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
