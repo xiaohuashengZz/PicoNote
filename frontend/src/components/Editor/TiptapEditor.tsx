@@ -14,6 +14,7 @@ import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
 import Image from "@tiptap/extension-image";
 import CodeBlock from "@tiptap/extension-code-block";
+import Link from "@tiptap/extension-link";
 import { useEffect, useCallback } from "react";
 import "./TiptapEditor.css";
 
@@ -63,6 +64,7 @@ export default function TiptapEditor({
         placeholder: "开始输入...",
       }),
 
+
       // 任务列表
       TaskList,
       TaskItem.configure({
@@ -75,14 +77,25 @@ export default function TiptapEditor({
         allowBase64: true,
       }),
 
+
       // 代码块
       CodeBlock.configure({
         HTMLAttributes: {
           class: "code-block",
         },
       }),
+
+      // 链接支持
+      Link.configure({
+        openOnClick: false, // 禁用默认点击打开，我们用 Ctrl+点击
+        HTMLAttributes: {
+          rel: "noopener noreferrer",
+          target: "_blank",
+        },
+      }),
     ],
     content: parseContent(content),
+
 
     // 内容变化时触发回调
     onUpdate: ({ editor }) => {
@@ -90,10 +103,30 @@ export default function TiptapEditor({
       onChange(json);
     },
 
+
     // 编辑器属性
     editorProps: {
       attributes: {
         class: "prose prose-sm sm:prose lg:prose-lg focus:outline-none",
+      },
+      // 自定义粘贴处理：将 URL 转换为可点击链接
+      handlePaste: (_view, event) => {
+        const clipboard = event.clipboardData;
+        if (!clipboard) return false;
+
+        const text = clipboard.getData("text/plain");
+        if (!text) return false;
+
+        // 检查是否为 URL（以 http:// 或 https:// 开头）
+        const urlPattern = /^https?:\/\/[^\s]+$/i;
+        if (urlPattern.test(text.trim())) {
+          // 使用编辑器命令插入链接
+          const url = text.trim();
+          editor?.chain().focus().insertContent(`<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`).run();
+          return true;
+        }
+
+        return false;
       },
     },
   });
@@ -117,10 +150,11 @@ export default function TiptapEditor({
   }
 
   /**
-   * 键盘快捷键处理
+   * 键盘快捷键处理和链接点击处理
    */
   useEffect(() => {
     if (!editor) return;
+
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ctrl/Cmd + S 保存
@@ -130,8 +164,25 @@ export default function TiptapEditor({
       }
     };
 
+    // Ctrl+点击链接打开
+    const editorElement = editor.view.dom;
+    const handleClick = (e: MouseEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        const target = e.target as HTMLElement;
+        const link = target.closest("a");
+        if (link && link.href) {
+          e.preventDefault();
+          window.open(link.href, "_blank");
+        }
+      }
+    };
+
+    editorElement.addEventListener("click", handleClick);
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      editorElement.removeEventListener("click", handleClick);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [editor, onSave]);
 
   /**
@@ -191,6 +242,7 @@ export default function TiptapEditor({
         </div>
 
         <div className="toolbar-divider" />
+
 
         {/* 标题按钮组 */}
         <div className="toolbar-group">
@@ -266,6 +318,7 @@ export default function TiptapEditor({
 
         <div className="toolbar-divider" />
 
+
         {/* 图片 */}
         <div className="toolbar-group">
           <button
@@ -278,6 +331,7 @@ export default function TiptapEditor({
         </div>
 
         <div className="toolbar-divider" />
+
 
         {/* 撤销和重做 */}
         <div className="toolbar-group">
